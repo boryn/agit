@@ -21,10 +21,13 @@ package com.madgag.agit;
 
 import android.test.suitebuilder.annotation.MediumTest;
 import android.util.Log;
+import com.madgag.agit.git.Repos;
 import com.madgag.agit.operation.lifecycle.OperationLifecycleSupport;
 import com.madgag.agit.operations.*;
+import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.storage.file.FileRepository;
+import org.eclipse.jgit.transport.RemoteConfig;
 import org.eclipse.jgit.transport.URIish;
 import roboguice.test.RoboUnitTestCase;
 import roboguice.util.RoboLooperThread;
@@ -34,12 +37,15 @@ import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 
 import static com.madgag.agit.GitTestUtils.*;
+import static com.madgag.agit.git.Repos.addRemoteTo;
+import static com.madgag.agit.git.Repos.remoteConfigFor;
 import static com.madgag.agit.matchers.HasGitObjectMatcher.hasGitObject;
 import static com.madgag.hamcrest.FileExistenceMatcher.exists;
 import static com.madgag.hamcrest.FileLengthMatcher.ofLength;
 import static java.lang.System.currentTimeMillis;
 import static java.lang.Thread.currentThread;
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.eclipse.jgit.lib.Constants.DEFAULT_REMOTE_NAME;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
@@ -61,6 +67,27 @@ public class GitAsyncTaskTest extends RoboUnitTestCase<AgitTestApplication> {
 		Clone cloneOp = new Clone(false, integrationGitServerURIFor("small-repo.early.git"), newFolder());
 
 		Repository repo = executeAndWaitFor(cloneOp);
+
+		assertThat(repo, hasGitObject("ba1f63e4430bff267d112b1e8afc1d6294db0ccc"));
+
+        File readmeFile= new File(repo.getWorkTree(), "README");
+        assertThat(readmeFile, exists());
+        assertThat(readmeFile, ofLength(12));
+	}
+
+    @MediumTest
+	public void testPullUpdatesFromLocalTestServer() throws Exception {
+        URIish oldUri = integrationGitServerURIFor("small-repo.early.git");
+        Git git=Git.cloneRepository().setDirectory(newFolder()).setURI(oldUri.toPrivateString()).call();
+
+		Repository repository = git.getRepository();
+		RemoteConfig remoteConfig = remoteConfigFor(repository, DEFAULT_REMOTE_NAME);
+        remoteConfig.removeURI(oldUri);
+        remoteConfig.addURI(integrationGitServerURIFor("small-repo.later.git"));
+        
+		Pull pullOp = new Pull(repository);
+
+		Repository repo = executeAndWaitFor(pullOp);
 
 		assertThat(repo, hasGitObject("ba1f63e4430bff267d112b1e8afc1d6294db0ccc"));
 

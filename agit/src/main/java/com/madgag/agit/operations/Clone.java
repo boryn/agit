@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 import com.google.inject.Inject;
 import com.madgag.agit.GitFetchService;
+import com.madgag.agit.git.Repos;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.InvalidRefNameException;
 import org.eclipse.jgit.api.errors.JGitInternalException;
@@ -69,7 +70,7 @@ public class Clone extends GitOperation {
 
         Git.init().setBare(bare).setDirectory(directory).call();
         Repository repository = new FileRepository(gitdir);
-        RemoteConfig remote = addRemote(remoteName, repository);
+        RemoteConfig remote = Repos.addRemoteTo(repository, remoteName, sourceUri);
         repoUpdateBroadcaster.broadcastUpdate();
 
         FetchResult fetchResult = fetchService.fetch(remote, null);
@@ -85,15 +86,6 @@ public class Clone extends GitOperation {
 		return new OpNotification(stat_sys_download_done, "Cloned "
 				+ sourceUri.getHumanishName(), "Clone completed",
 				sourceUri.toString());
-	}
-
-	private RemoteConfig addRemote(String remoteName, Repository repository)
-			throws IOException {
-		RemoteConfig remote = createRemote(remoteName, repository.getConfig());
-
-		Log.d(TAG, "About to save config...");
-		repository.getConfig().save();
-		return remote;
 	}
 
 	private void checkoutHeadFrom(FetchResult fetchResult, Repository db)
@@ -157,22 +149,6 @@ public class Clone extends GitOperation {
 			Log.d(TAG, "mkdirs 'created' returned : " + created
 					+ " and gitDirParentFolder.exists()=" + folder.exists());
 		}
-	}
-
-	private RemoteConfig createRemote(String remoteName, StoredConfig config) {
-		RemoteConfig remote;
-		try {
-			remote = new RemoteConfig(config, remoteName);
-		} catch (URISyntaxException e2) {
-			throw new RuntimeException(e2);
-		}
-
-		remote.addURI(sourceUri);
-		remote.addFetchRefSpec(new RefSpec().setForceUpdate(true)
-				.setSourceDestination(R_HEADS + "*",
-						R_REMOTES + remoteName + "/*"));
-		remote.update(config);
-		return remote;
 	}
 
 	private Ref guessHEAD(final FetchResult result) {
