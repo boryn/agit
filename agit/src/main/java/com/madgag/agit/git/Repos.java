@@ -19,17 +19,7 @@
 
 package com.madgag.agit.git;
 
-import static android.os.Environment.getExternalStorageDirectory;
-import static com.google.common.collect.Lists.newArrayList;
-import static java.lang.System.identityHashCode;
-import static org.eclipse.jgit.lib.Constants.*;
-import static org.eclipse.jgit.storage.file.WindowCacheConfig.MB;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.List;
-
+import android.util.Log;
 import com.google.common.base.Function;
 import com.google.common.collect.Ordering;
 import com.madgag.agit.git.model.HasLatestCommit;
@@ -45,7 +35,16 @@ import org.eclipse.jgit.transport.RemoteConfig;
 import org.eclipse.jgit.transport.URIish;
 import org.eclipse.jgit.util.FS;
 
-import android.util.Log;
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.List;
+
+import static android.os.Environment.getExternalStorageDirectory;
+import static com.google.common.collect.Lists.newArrayList;
+import static java.lang.System.identityHashCode;
+import static org.eclipse.jgit.lib.Constants.*;
+import static org.eclipse.jgit.storage.file.WindowCacheConfig.MB;
 
 public class Repos {
 

@@ -20,8 +20,7 @@
 package com.madgag.agit.views;
 
 import android.content.Context;
-import android.text.*;
-import android.text.style.AlignmentSpan;
+import android.text.ClipboardManager;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.TextView;
@@ -29,8 +28,6 @@ import android.widget.Toast;
 import org.eclipse.jgit.lib.ObjectId;
 
 import static android.content.Context.CLIPBOARD_SERVICE;
-import static android.text.Html.fromHtml;
-import static android.text.Layout.Alignment.ALIGN_CENTER;
 import static android.widget.Toast.LENGTH_SHORT;
 import static com.madgag.agit.views.TextUtil.centered;
 

@@ -19,8 +19,9 @@
 
 package com.madgag.agit.git;
 
-import static java.lang.System.identityHashCode;
-
+import android.util.Log;
+import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.madgag.agit.guice.RepositoryScoped;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.transport.RemoteConfig;
@@ -28,10 +29,7 @@ import org.eclipse.jgit.transport.SshSessionFactory;
 import org.eclipse.jgit.transport.SshTransport;
 import org.eclipse.jgit.transport.Transport;
 
-import android.util.Log;
-
-import com.google.inject.Inject;
-import com.google.inject.Provider;
+import static java.lang.System.identityHashCode;
 
 @RepositoryScoped
 public class TransportFactory {

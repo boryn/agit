@@ -23,18 +23,15 @@ import android.content.Context;
 import com.google.inject.Inject;
 import com.madgag.agit.GitFetchService;
 import com.madgag.agit.R;
-import com.madgag.agit.git.Repos;
 import org.eclipse.jgit.JGitText;
 import org.eclipse.jgit.api.*;
 import org.eclipse.jgit.api.errors.*;
 import org.eclipse.jgit.lib.*;
 import org.eclipse.jgit.transport.FetchResult;
-import org.eclipse.jgit.transport.RemoteConfig;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
-import java.util.List;
 
 import static android.R.drawable.stat_sys_download;
 import static android.R.drawable.stat_sys_download_done;
@@ -42,7 +39,7 @@ import static com.madgag.agit.R.string.*;
 import static com.madgag.agit.git.Repos.remoteConfigFor;
 import static org.eclipse.jgit.api.RebaseCommand.Operation.BEGIN;
 import static org.eclipse.jgit.lib.ConfigConstants.*;
-import static org.eclipse.jgit.lib.ConfigConstants.CONFIG_KEY_REMOTE;
+import static org.eclipse.jgit.lib.ConfigConstants.CONFIG_KEY_REBASE;
 import static org.eclipse.jgit.lib.Constants.R_HEADS;
 import static org.eclipse.jgit.lib.RepositoryState.SAFE;
 
@@ -212,19 +209,16 @@ public class Pull extends GitOperation {
             throw exceptionMessage(pull_cancelled);
     }
 
-    private String getConfigOrDie(Config repoConfig, String remote, String configRemoteSection, String configKeyUrl) {
-        String val = repoConfig.getString(configRemoteSection, remote, configKeyUrl);
+    private String getConfigOrDie(Config repoConfig, String section, String subsection, String name) {
+        String val = repoConfig.getString(section, subsection, name);
         if (val == null) {
-            String missingKey = configRemoteSection + DOT + remote + DOT + configKeyUrl;
-            throw exceptionMessage(missing_configuration_for_key, missingKey);
+            throw exceptionMessage(missing_configuration_for_key, section, subsection, name);
         }
         return val;
     }
 
     private boolean branchUsesPullRebase(String branchName, Config repoConfig) {
-        return repoConfig.getBoolean(
-                CONFIG_BRANCH_SECTION, branchName,
-                ConfigConstants.CONFIG_KEY_REBASE, false);
+        return repoConfig.getBoolean(CONFIG_BRANCH_SECTION, branchName, CONFIG_KEY_REBASE, false);
     }
 
     public String getName() {

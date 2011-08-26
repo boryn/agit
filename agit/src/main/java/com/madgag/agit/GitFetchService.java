@@ -19,17 +19,15 @@
 
 package com.madgag.agit;
 
+import android.util.Log;
+import com.google.inject.Inject;
+import com.jcraft.jsch.JSchException;
 import com.madgag.agit.git.TransportFactory;
 import com.madgag.agit.guice.OperationScoped;
 import com.madgag.agit.operations.*;
 import org.eclipse.jgit.errors.NotSupportedException;
 import org.eclipse.jgit.errors.TransportException;
 import org.eclipse.jgit.transport.*;
-
-import android.util.Log;
-
-import com.google.inject.Inject;
-import com.jcraft.jsch.JSchException;
 
 import java.util.Collection;
 

@@ -22,7 +22,10 @@ package com.madgag.agit;
 import android.app.Dialog;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
-import android.content.*;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -42,9 +45,7 @@ import java.io.File;
 
 import static android.R.drawable.ic_menu_delete;
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
-import static com.madgag.agit.GitIntents.REPO_STATE_CHANGED_BROADCAST;
-import static com.madgag.agit.GitIntents.actionWithSuffix;
-import static com.madgag.agit.GitIntents.gitDirFrom;
+import static com.madgag.agit.GitIntents.*;
 import static com.madgag.agit.R.drawable.ic_title_fetch;
 import static com.madgag.agit.git.Repos.niceNameFor;
 
